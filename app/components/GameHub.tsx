@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { MyGames } from './Mygames'
-import { ShareYourIdea } from './comparte-tu-idea'
+import { ComparteTuIdea } from './comparte-tu-idea'
 
 export function GameDevelopmentHub() {
   const [activeTab, setActiveTab] = useState<'games' | 'share'>('games')
@@ -34,7 +34,7 @@ export function GameDevelopmentHub() {
           </button>
         </div>
         <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-          {activeTab === 'games' ? <MyGames /> : <ShareYourIdea />}
+          {activeTab === 'games' ? <MyGames /> : <ComparteTuIdea />}
         </div>
       </div>
     </section>

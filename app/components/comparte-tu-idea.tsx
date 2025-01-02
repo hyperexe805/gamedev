@@ -4,198 +4,152 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Slider } from "@/components/ui/slider"
 
-export function ShareYourIdea() {
+const FEATURES = ["Multiplayer", "Single Player", "Online", "Story Mode", "Open World", "Others"]
+
+interface ExtraField {
+  id: number;
+  value: string;
+}
+
+export function ComparteTuIdea() {
   const [title, setTitle] = useState('')
-  const [genre, setGenre] = useState('')
   const [description, setDescription] = useState('')
-  const [targetAudience, setTargetAudience] = useState('')
-  const [platforms, setPlatforms] = useState<string[]>([])
-  const [artStyle, setArtStyle] = useState('')
-  const [otherArtStyle, setOtherArtStyle] = useState('')
-  const [developmentTime, setDevelopmentTime] = useState(6)
-  const [features, setFeatures] = useState<string[]>([])
-  const [otherFeature, setOtherFeature] = useState('')
+  const [category, setCategory] = useState('')
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([])
+  const [inDevelopment, setInDevelopment] = useState(false)
+  const [customFeature, setCustomFeature] = useState('')
+  const [extraFields, setExtraFields] = useState<ExtraField[]>([])
+  const [nextId, setNextId] = useState(1)
 
-  const handleIdeaSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const finalArtStyle = artStyle === 'other' ? otherArtStyle : artStyle
-    const finalFeatures = features.includes('Other') ? [...features.filter(f => f !== 'Other'), otherFeature] : features
-    console.log({ title, genre, description, targetAudience, platforms, artStyle: finalArtStyle, developmentTime, features: finalFeatures })
+    console.log({ 
+      title, 
+      description, 
+      category, 
+      selectedFeatures, 
+      inDevelopment,
+      extraFields 
+    })
+  }
+
+  const addNewField = () => {
+    setExtraFields([...extraFields, { id: nextId, value: '' }])
+    setNextId(nextId + 1)
+  }
+
+  const updateExtraField = (id: number, value: string) => {
+    setExtraFields(extraFields.map(field => 
+      field.id === id ? { ...field, value } : field
+    ))
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Share Your Game Idea</h2>
-      <p className="text-gray-600 mb-6">
-        Have a great game idea? Share it here! If your idea catches our attention and aligns with our development goals, we might turn it into reality. Don't worry, you'll receive full credit for your original concept if we decide to develop it.
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Share your idea</h1>
+      <p className="mb-6">
+        Share your game idea with us and we&apos;ll help you develop it.
       </p>
-      <form onSubmit={handleIdeaSubmit} className="space-y-6">
-        <div>
-          <Label htmlFor="title" className="text-gray-700">Game Title</Label>
-          <Input 
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="title">Game Title</Label>
+          <Input
             id="title"
-            placeholder="Enter your game title" 
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border-gray-300 mt-1"
+            placeholder="Enter your game title"
           />
         </div>
-        <div>
-          <Label htmlFor="genre" className="text-gray-700">Genre</Label>
-          <Select onValueChange={setGenre} value={genre}>
-            <SelectTrigger id="genre" className="w-full border-gray-300 mt-1">
-              <SelectValue placeholder="Select a genre" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="action">Action</SelectItem>
-              <SelectItem value="adventure">Adventure</SelectItem>
-              <SelectItem value="rpg">RPG</SelectItem>
-              <SelectItem value="strategy">Strategy</SelectItem>
-              <SelectItem value="simulation">Simulation</SelectItem>
-              <SelectItem value="sports">Sports</SelectItem>
-              <SelectItem value="puzzle">Puzzle</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="description" className="text-gray-700">Game Description</Label>
-          <Textarea 
+
+        <div className="space-y-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
             id="description"
-            placeholder="Describe your game idea..." 
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            rows={4}
-            className="w-full border-gray-300 mt-1"
+            placeholder="Describe your game idea"
           />
         </div>
-        <div>
-          <Label htmlFor="targetAudience" className="text-gray-700">Target Audience</Label>
-          <Select onValueChange={setTargetAudience} value={targetAudience}>
-            <SelectTrigger id="targetAudience" className="w-full border-gray-300 mt-1">
-              <SelectValue placeholder="Select target audience" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="children">Children</SelectItem>
-              <SelectItem value="teens">Teenagers</SelectItem>
-              <SelectItem value="adults">Adults</SelectItem>
-              <SelectItem value="all">All Ages</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="text-gray-700">Platforms</Label>
-          <div className="grid grid-cols-2 gap-2 mt-1">
-            {['PC', 'Mobile'].map((platform) => (
-              <div key={platform} className="flex items-center space-x-2">
-                <Checkbox
-                  id={platform}
-                  checked={platforms.includes(platform)}
-                  onCheckedChange={(checked) => 
-                    setPlatforms(prev => 
-                      checked 
-                        ? [...prev, platform]
-                        : prev.filter(p => p !== platform)
-                    )
-                  }
-                />
-                <label
-                  htmlFor={platform}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {platform}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div>
-          <Label htmlFor="artStyle" className="text-gray-700">Art Style</Label>
-          <Select onValueChange={setArtStyle} value={artStyle}>
-            <SelectTrigger id="artStyle" className="w-full border-gray-300 mt-1">
-              <SelectValue placeholder="Select art style" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="2d-pixel">2D Pixel Art</SelectItem>
-              <SelectItem value="2d-cartoon">2D Cartoon</SelectItem>
-              <SelectItem value="3d-lowpoly">3D Low Poly</SelectItem>
-              <SelectItem value="3d-realistic">3D Realistic</SelectItem>
-              <SelectItem value="hand-drawn">Hand Drawn</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectContent>
-          </Select>
-          {artStyle === 'other' && (
-            <Input 
-              placeholder="Specify your art style"
-              value={otherArtStyle}
-              onChange={(e) => setOtherArtStyle(e.target.value)}
-              className="w-full border-gray-300 mt-2"
+
+        {extraFields.map(field => (
+          <div key={field.id} className="space-y-2">
+            <Label htmlFor={`extra-${field.id}`}>Additional Description</Label>
+            <Textarea
+              id={`extra-${field.id}`}
+              value={field.value}
+              onChange={(e) => updateExtraField(field.id, e.target.value)}
+              placeholder="Add more details"
             />
-          )}
-        </div>
-        <div>
-          <Label className="text-gray-700">Estimated Development Time (months)</Label>
-          <Slider
-            min={1}
-            max={24}
-            step={1}
-            value={[developmentTime]}
-            onValueChange={(value) => setDevelopmentTime(value[0])}
-            className="mt-2"
+          </div>
+        ))}
+
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={addNewField}
+          className="w-full"
+        >
+          Add More Details +
+        </Button>
+
+        <div className="space-y-2">
+          <Label htmlFor="category">Category</Label>
+          <Input
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            placeholder="Ex: Action, Adventure, RPG"
           />
-          <p className="text-sm text-gray-600 mt-1">{developmentTime} months</p>
         </div>
-        <div>
-          <Label className="text-gray-700">Key Features</Label>
-          <div className="grid grid-cols-2 gap-2 mt-1">
-            {[
-              'Multiplayer',
-              'Open World',
-              'Crafting System',
-              'Character Customization',
-              'Procedural Generation',
-              'Skill Tree',
-              'Achievements',
-              'Leaderboards',
-              'Other'
-            ].map((feature) => (
+
+        <div className="space-y-2">
+          <Label>Features</Label>
+          <div className="grid grid-cols-2 gap-4">
+            {FEATURES.map(feature => (
               <div key={feature} className="flex items-center space-x-2">
                 <Checkbox
                   id={feature}
-                  checked={features.includes(feature)}
-                  onCheckedChange={(checked) => 
-                    setFeatures(prev => 
-                      checked 
-                        ? [...prev, feature]
-                        : prev.filter(f => f !== feature)
-                    )
-                  }
+                  checked={selectedFeatures.includes(feature)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setSelectedFeatures(prev => [...prev, feature])
+                    } else {
+                      setSelectedFeatures(prev => prev.filter(f => f !== feature))
+                    }
+                  }}
                 />
-                <label
-                  htmlFor={feature}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {feature}
-                </label>
+                <Label htmlFor={feature}>{feature}</Label>
               </div>
             ))}
           </div>
-          {features.includes('Other') && (
-            <Input 
-              placeholder="Specify your custom feature"
-              value={otherFeature}
-              onChange={(e) => setOtherFeature(e.target.value)}
-              className="w-full border-gray-300 mt-2"
+          
+        {selectedFeatures.includes('Others') && (
+          <div className="mt-2">
+            <Input
+              placeholder="Enter custom feature"
+              value={customFeature}
+              onChange={(e) => setCustomFeature(e.target.value)}
+              className="w-full"
             />
-          )}
+          </div>
+        )}
         </div>
-        <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white">
-          Submit Game Idea
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="inDevelopment"
+            checked={inDevelopment}
+            onCheckedChange={(checked) => setInDevelopment(checked as boolean)}
+          />
+          <Label htmlFor="inDevelopment">Already in development</Label>
+        </div>
+
+        <Button type="submit" className="w-full">
+          Submit Idea
         </Button>
       </form>
     </div>
