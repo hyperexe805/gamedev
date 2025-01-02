@@ -10,7 +10,7 @@ export function GameDevelopmentHub() {
   return (
     <section className="py-16 bg-gray-100 min-h-screen">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Game Development Hub</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Do you want to work with me?</h1>
         <div className="flex justify-center mb-8 space-x-4 text-lg">
           <button
             onClick={() => setActiveTab('games')}
