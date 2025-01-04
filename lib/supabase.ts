@@ -1,10 +1,11 @@
-// lib/supabase.ts
-
 import { createClient } from '@supabase/supabase-js'
 
-// URL y clave del proyecto en Supabase
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://tu-supabase-url.supabase.co'
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || 'tu-supabase-key'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// Crear cliente de Supabase
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: true
+  }
+})
