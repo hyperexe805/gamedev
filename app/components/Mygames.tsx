@@ -12,7 +12,7 @@ export function MyGames() {
       title: "Pixel Climb",
       category: "Frustration",
       inDevelopment: true,
-      image: "",
+      image: "/",
       link: "#"
     },
    
