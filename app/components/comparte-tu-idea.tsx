@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import { toast } from 'sonner'
+import { GameIdea } from '../models/GameIdea'
+import { submitGameIdea } from '../services/createGameIdea'
 
 const FEATURES = ["Multiplayer", "Single Player", "Online", "Story Mode", "Open World", "Others"]
 
@@ -24,16 +27,35 @@ export function ComparteTuIdea() {
   const [extraFields, setExtraFields] = useState<ExtraField[]>([])
   const [nextId, setNextId] = useState(1)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log({ 
-      title, 
-      description, 
-      category, 
-      selectedFeatures, 
-      inDevelopment,
-      extraFields 
-    })
+    try {
+      const gameIdea: GameIdea = {
+        title,
+        description,
+        category,
+        features: selectedFeatures.includes('Others') 
+          ? [...selectedFeatures.filter(f => f !== 'Others'), customFeature]
+          : selectedFeatures,
+        inDevelopment,
+        extraDetails: extraFields.map(field => field.value)
+      }
+
+      await submitGameIdea(gameIdea)
+      toast.success('Game idea submitted successfully!')
+      
+      // Reset form
+      setTitle('')
+      setDescription('')
+      setCategory('')
+      setSelectedFeatures([])
+      setInDevelopment(false)
+      setCustomFeature('')
+      setExtraFields([])
+    } catch (error) {
+      console.error('Error:', error)
+      toast.error('Failed to submit game idea')
+    }
   }
 
   const addNewField = () => {
@@ -140,12 +162,8 @@ export function ComparteTuIdea() {
         </div>
 
         <div className="flex items-center space-x-2">
-          <Checkbox
-            id="inDevelopment"
-            checked={inDevelopment}
-            onCheckedChange={(checked) => setInDevelopment(checked as boolean)}
-          />
-          <Label htmlFor="inDevelopment">Already in development</Label>
+         
+          
         </div>
 
         <Button type="submit" className="w-full">
