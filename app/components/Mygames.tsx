@@ -4,6 +4,12 @@ import { Badge } from "@/components/ui/badge";
 
 export function MyGames() {
   const { games, loading } = useGames();
+  const gamesinitial = {
+    id: 1,
+    title: "Pixel Climb",
+    category: "Frustration",
+    inDevelopment: true,
+  }
 
   if (loading) {
     return <p>Loading games...</p>;
@@ -15,7 +21,7 @@ export function MyGames() {
 
   return (
     <div>
-      {games.map((game) => (
+      {gamesinitial.map((game) => (
         <Card key={game.id}>
           <CardHeader>
             <CardTitle>{game.title}</CardTitle>
